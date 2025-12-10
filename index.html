@@ -21,7 +21,7 @@
         }
         
         .container {
-            max-width: 800px;
+            max-width: 900px;
             width: 100%;
             background-color: white;
             border-radius: 20px;
@@ -46,6 +46,39 @@
             font-size: 1.2rem;
         }
         
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .mode-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: #e6f2ff;
+            color: #0066cc;
+            border: 3px solid #99ccff;
+        }
+        
+        .mode-btn:hover {
+            background-color: #ccddff;
+            transform: translateY(-2px);
+        }
+        
+        .mode-btn.active {
+            background-color: #4d94ff;
+            color: white;
+            border-color: #0066cc;
+            box-shadow: 0 4px 0 #0066cc;
+        }
+        
         .instructions {
             background-color: #e6f2ff;
             padding: 15px;
@@ -65,6 +98,18 @@
         
         .instructions li {
             margin-bottom: 8px;
+        }
+        
+        .letter-pair-display {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #cc0066;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #fff0f5;
+            border-radius: 15px;
+            border: 3px solid #ff99cc;
         }
         
         .word-container {
@@ -113,23 +158,22 @@
             height: 70px;
             border: none;
             border-radius: 15px;
-            background-color: #ccddff;
-            color: #003366;
+            color: white;
             font-size: 2rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 4px 0 #99aaff;
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
         }
         
         .option-btn:hover {
-            background-color: #b3ccff;
             transform: translateY(-2px);
+            box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
         }
         
         .option-btn:active {
             transform: translateY(2px);
-            box-shadow: 0 2px 0 #99aaff;
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
         }
         
         .btn-group {
@@ -147,12 +191,12 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
         }
         
         #check-btn {
             background-color: #4CAF50;
             color: white;
-            box-shadow: 0 4px 0 #3d8b40;
         }
         
         #check-btn:hover {
@@ -162,7 +206,6 @@
         #next-btn {
             background-color: #008CBA;
             color: white;
-            box-shadow: 0 4px 0 #00688B;
         }
         
         #next-btn:hover {
@@ -172,7 +215,6 @@
         #hint-btn {
             background-color: #ff9800;
             color: white;
-            box-shadow: 0 4px 0 #cc7a00;
         }
         
         #hint-btn:hover {
@@ -269,17 +311,31 @@
                 height: 60px;
                 font-size: 1.6rem;
             }
+            
+            .mode-btn {
+                padding: 10px 15px;
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Wörter verlängern</h1>
-        <div class="subtitle">2. Klasse - Übe b/p, d/t, g/k</div>
+        <div class="subtitle">2. Klasse - Übe b/p, d/t oder g/k</div>
+        
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="bp">b und p</button>
+            <button class="mode-btn" data-mode="dt">d und t</button>
+            <button class="mode-btn" data-mode="gk">g und k</button>
+        </div>
+        
+        <div class="letter-pair-display" id="letter-pair-display">b oder p?</div>
         
         <div class="instructions">
             <h3>So geht's:</h3>
             <ul>
+                <li>Wähle oben aus, welches Buchstabenpaar du üben möchtest</li>
                 <li>Schau dir das Wort mit Lücke an und überlege, welcher Buchstabe fehlt</li>
                 <li>Verlängere das Wort im Kopf, dann hörst du welcher Buchstabe richtig ist</li>
                 <li>Beispiel: "We__" (Weg) wird zu "We-ge" → Also ist "g" richtig, nicht "k"</li>
@@ -295,13 +351,8 @@
             <div class="word-part" id="word-part2"></div>
         </div>
         
-        <div class="options">
-            <button class="option-btn" data-option="b">b</button>
-            <button class="option-btn" data-option="p">p</button>
-            <button class="option-btn" data-option="d">d</button>
-            <button class="option-btn" data-option="t">t</button>
-            <button class="option-btn" data-option="g">g</button>
-            <button class="option-btn" data-option="k">k</button>
+        <div class="options" id="options-container">
+            <!-- Option buttons werden dynamisch erstellt -->
         </div>
         
         <div class="btn-group">
@@ -311,7 +362,7 @@
         </div>
         
         <div class="feedback" id="feedback">
-            Wähle einen Buchstaben und klicke auf "Prüfen"
+            Wähle zuerst ein Buchstabenpaar oben aus
         </div>
         
         <div class="progress-container">
@@ -321,44 +372,73 @@
         <div class="stats">
             <div>Richtig: <span id="correct-count">0</span></div>
             <div>Falsch: <span id="incorrect-count">0</span></div>
-            <div>Wörter: <span id="word-count">1</span>/10</div>
+            <div>Wörter: <span id="word-count">0</span>/5</div>
         </div>
     </div>
 
     <script>
-        // Datenbank mit Übungswörtern
-        const words = [
-            // Nomen
-            { word: "We_", part1: "We", part2: "", gapIndex: 2, correct: "g", type: "Nomen", hint: "Wege", fullWord: "Weg" },
-            { word: "Ta_", part1: "Ta", part2: "", gapIndex: 2, correct: "g", type: "Nomen", hint: "Tage", fullWord: "Tag" },
-            { word: "Se_el", part1: "Se", part2: "el", gapIndex: 2, correct: "g", type: "Nomen", hint: "Segel", fullWord: "Segel" },
-            { word: "Hu_", part1: "Hu", part2: "", gapIndex: 2, correct: "b", type: "Nomen", hint: "Hübe", fullWord: "Hub" },
-            { word: "Lam_", part1: "Lam", part2: "", gapIndex: 3, correct: "b", type: "Nomen", hint: "Lämmer", fullWord: "Lamm" },
-            { word: "Gru_", part1: "Gru", part2: "", gapIndex: 3, correct: "b", type: "Nomen", hint: "Grübe", fullWord: "Grub" },
+        // Datenbank mit Übungswörtern nach Buchstabenpaaren getrennt
+        const wordGroups = {
+            // b und p Wörter
+            bp: [
+                { word: "Lam_", part1: "Lam", part2: "", gapIndex: 3, correct: "b", type: "Nomen", hint: "Lämmer", fullWord: "Lamm" },
+                { word: "Gru_", part1: "Gru", part2: "", gapIndex: 3, correct: "b", type: "Nomen", hint: "Grübe", fullWord: "Grub" },
+                { word: "Hu_", part1: "Hu", part2: "", gapIndex: 2, correct: "b", type: "Nomen", hint: "Hübe", fullWord: "Hub" },
+                { word: "ha_en", part1: "ha", part2: "en", gapIndex: 2, correct: "b", type: "Verb", hint: "haben", fullWord: "haben" },
+                { word: "kam_", part1: "kam", part2: "", gapIndex: 3, correct: "p", type: "Verb", hint: "kampf", fullWord: "kampf" },
+                { word: "schlum_ern", part1: "schlum", part2: "ern", gapIndex: 5, correct: "p", type: "Verb", hint: "schlumpf", fullWord: "schlumpf" },
+                { word: "Ta_er", part1: "Ta", part2: "er", gapIndex: 2, correct: "p", type: "Nomen", hint: "Taper", fullWord: "Taper" },
+                { word: "Ka_en", part1: "Ka", part2: "en", gapIndex: 2, correct: "p", type: "Nomen", hint: "Kappen", fullWord: "Kappen" }
+            ],
             
-            // Verben
-            { word: "re_nen", part1: "re", part2: "nen", gapIndex: 2, correct: "d", type: "Verb", hint: "reden", fullWord: "reden" },
-            { word: "rei_en", part1: "rei", part2: "en", gapIndex: 3, correct: "t", type: "Verb", hint: "reiten", fullWord: "reiten" },
-            { word: "lau_en", part1: "lau", part2: "en", gapIndex: 3, correct: "f", type: "Verb", hint: "laufen", fullWord: "laufen" },
-            { word: "sa_en", part1: "sa", part2: "en", gapIndex: 2, correct: "g", type: "Verb", hint: "sagen", fullWord: "sagen" },
-            { word: "ha_en", part1: "ha", part2: "en", gapIndex: 2, correct: "b", type: "Verb", hint: "haben", fullWord: "haben" },
-            { word: "packe_", part1: "packe", part2: "", gapIndex: 5, correct: "n", type: "Verb", hint: "packen", fullWord: "packen" }
-        ];
+            // d und t Wörter
+            dt: [
+                { word: "re_nen", part1: "re", part2: "nen", gapIndex: 2, correct: "d", type: "Verb", hint: "reden", fullWord: "reden" },
+                { word: "rei_en", part1: "rei", part2: "en", gapIndex: 3, correct: "t", type: "Verb", hint: "reiten", fullWord: "reiten" },
+                { word: "Fun_", part1: "Fun", part2: "", gapIndex: 3, correct: "d", type: "Nomen", hint: "Fund", fullWord: "Fund" },
+                { word: "Lan_", part1: "Lan", part2: "", gapIndex: 3, correct: "d", type: "Nomen", hint: "Land", fullWord: "Land" },
+                { word: "Ha_", part1: "Ha", part2: "", gapIndex: 2, correct: "t", type: "Nomen", hint: "Hut", fullWord: "Hut" },
+                { word: "Ra_", part1: "Ra", part2: "", gapIndex: 2, correct: "t", type: "Nomen", hint: "Rat", fullWord: "Rat" },
+                { word: "bil_en", part1: "bil", part2: "en", gapIndex: 3, correct: "d", type: "Verb", hint: "bilden", fullWord: "bilden" },
+                { word: "arbei_en", part1: "arbei", part2: "en", gapIndex: 5, correct: "t", type: "Verb", hint: "arbeiten", fullWord: "arbeiten" }
+            ],
+            
+            // g und k Wörter
+            gk: [
+                { word: "We_", part1: "We", part2: "", gapIndex: 2, correct: "g", type: "Nomen", hint: "Wege", fullWord: "Weg" },
+                { word: "Ta_", part1: "Ta", part2: "", gapIndex: 2, correct: "g", type: "Nomen", hint: "Tage", fullWord: "Tag" },
+                { word: "Se_el", part1: "Se", part2: "el", gapIndex: 2, correct: "g", type: "Nomen", hint: "Segel", fullWord: "Segel" },
+                { word: "sa_en", part1: "sa", part2: "en", gapIndex: 2, correct: "g", type: "Verb", hint: "sagen", fullWord: "sagen" },
+                { word: "tra_en", part1: "tra", part2: "en", gapIndex: 3, correct: "g", type: "Verb", hint: "tragen", fullWord: "tragen" },
+                { word: "Bu_", part1: "Bu", part2: "", gapIndex: 2, correct: "k", type: "Nomen", hint: "Buch", fullWord: "Buch" },
+                { word: "Da_", part1: "Da", part2: "", gapIndex: 2, correct: "k", type: "Nomen", hint: "Dach", fullWord: "Dach" },
+                { word: "ko_en", part1: "ko", part2: "en", gapIndex: 2, correct: "k", type: "Verb", hint: "kochen", fullWord: "kochen" }
+            ]
+        };
+        
+        // Farben für die Buchstabenpaare
+        const modeColors = {
+            bp: { primary: "#ff6699", secondary: "#ffccdd", option1: "#ff3366", option2: "#cc0066" },
+            dt: { primary: "#66cc66", secondary: "#ccffcc", option1: "#339933", option2: "#006600" },
+            gk: { primary: "#6699ff", secondary: "#ccddff", option1: "#3366cc", option2: "#003399" }
+        };
         
         // App-Zustand
+        let currentMode = "bp";
+        let currentWords = [];
         let currentWordIndex = 0;
         let selectedOption = null;
         let correctCount = 0;
         let incorrectCount = 0;
-        let wordCount = 1;
-        const totalWords = 10;
+        let wordCount = 0;
+        const wordsPerRound = 5;
         
         // DOM-Elemente
         const wordTypeElement = document.getElementById('word-type');
         const wordPart1Element = document.getElementById('word-part1');
         const wordPart2Element = document.getElementById('word-part2');
         const wordGapElement = document.getElementById('word-gap');
-        const optionButtons = document.querySelectorAll('.option-btn');
+        const optionsContainer = document.getElementById('options-container');
         const checkButton = document.getElementById('check-btn');
         const nextButton = document.getElementById('next-btn');
         const hintButton = document.getElementById('hint-btn');
@@ -367,23 +447,19 @@
         const incorrectCountElement = document.getElementById('incorrect-count');
         const wordCountElement = document.getElementById('word-count');
         const progressBarElement = document.getElementById('progress-bar');
+        const letterPairDisplay = document.getElementById('letter-pair-display');
+        const modeButtons = document.querySelectorAll('.mode-btn');
         
         // Initialisierung
         function init() {
-            loadWord(currentWordIndex);
-            updateStats();
-            updateProgressBar();
+            // Standard-Modus aktivieren
+            setMode("bp");
             
-            // Event-Listener für Option-Buttons
-            optionButtons.forEach(button => {
+            // Event-Listener für Modus-Buttons
+            modeButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    // Markiere den ausgewählten Button
-                    optionButtons.forEach(btn => btn.style.backgroundColor = '#ccddff');
-                    button.style.backgroundColor = '#99ccff';
-                    selectedOption = button.getAttribute('data-option');
-                    wordGapElement.textContent = selectedOption;
-                    feedbackElement.textContent = `Ausgewählt: ${selectedOption}. Klicke auf "Prüfen"!`;
-                    feedbackElement.className = 'feedback';
+                    const mode = button.getAttribute('data-mode');
+                    setMode(mode);
                 });
             });
             
@@ -393,9 +469,111 @@
             hintButton.addEventListener('click', showHint);
         }
         
+        // Modus setzen
+        function setMode(mode) {
+            // Aktiven Button markieren
+            modeButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-mode') === mode) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            currentMode = mode;
+            currentWords = [...wordGroups[mode]];
+            currentWordIndex = 0;
+            wordCount = 0;
+            correctCount = 0;
+            incorrectCount = 0;
+            
+            // Farben für den aktuellen Modus anwenden
+            const colors = modeColors[mode];
+            letterPairDisplay.style.backgroundColor = colors.secondary;
+            letterPairDisplay.style.borderColor = colors.primary;
+            letterPairDisplay.style.color = colors.option2;
+            
+            // Passende Anzeige für Buchstabenpaar
+            if (mode === "bp") {
+                letterPairDisplay.textContent = "b oder p?";
+            } else if (mode === "dt") {
+                letterPairDisplay.textContent = "d oder t?";
+            } else {
+                letterPairDisplay.textContent = "g oder k?";
+            }
+            
+            // Option-Buttons erstellen
+            createOptionButtons(mode);
+            
+            // Erstes Wort laden
+            loadWord();
+            updateStats();
+            updateProgressBar();
+            
+            // Feedback zurücksetzen
+            feedbackElement.textContent = "Wähle einen Buchstaben und klicke auf 'Prüfen'";
+            feedbackElement.className = 'feedback';
+            
+            // Buttons zurücksetzen
+            nextButton.disabled = true;
+            checkButton.disabled = false;
+            hintButton.disabled = false;
+        }
+        
+        // Option-Buttons erstellen
+        function createOptionButtons(mode) {
+            optionsContainer.innerHTML = '';
+            
+            // Buchstabenpaar basierend auf Modus
+            let letters = [];
+            if (mode === "bp") {
+                letters = ["b", "p"];
+            } else if (mode === "dt") {
+                letters = ["d", "t"];
+            } else {
+                letters = ["g", "k"];
+            }
+            
+            // Farben für den aktuellen Modus
+            const colors = modeColors[mode];
+            
+            // Für jeden Buchstaben einen Button erstellen
+            letters.forEach(letter => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.setAttribute('data-option', letter);
+                button.textContent = letter;
+                
+                // Farbe für den Button
+                button.style.backgroundColor = colors.option1;
+                
+                button.addEventListener('click', () => {
+                    // Markiere den ausgewählten Button
+                    document.querySelectorAll('.option-btn').forEach(btn => {
+                        btn.style.backgroundColor = colors.option1;
+                        btn.style.boxShadow = "0 4px 0 rgba(0, 0, 0, 0.2)";
+                    });
+                    
+                    button.style.backgroundColor = colors.option2;
+                    button.style.boxShadow = "0 4px 0 " + colors.option2;
+                    
+                    selectedOption = letter;
+                    wordGapElement.textContent = selectedOption;
+                    feedbackElement.textContent = `Ausgewählt: ${selectedOption}. Klicke auf "Prüfen"!`;
+                    feedbackElement.className = 'feedback';
+                });
+                
+                optionsContainer.appendChild(button);
+            });
+        }
+        
         // Wort laden
-        function loadWord(index) {
-            const wordData = words[index % words.length];
+        function loadWord() {
+            // Mische die Wörter für Abwechslung
+            if (currentWordIndex === 0) {
+                shuffleArray(currentWords);
+            }
+            
+            const wordData = currentWords[currentWordIndex % currentWords.length];
             
             // Wortteile anzeigen
             wordPart1Element.textContent = wordData.part1;
@@ -408,9 +586,15 @@
             
             // Auswahl zurücksetzen
             selectedOption = null;
-            optionButtons.forEach(btn => btn.style.backgroundColor = '#ccddff');
-            feedbackElement.textContent = "Wähle einen Buchstaben und klicke auf 'Prüfen'";
-            feedbackElement.className = 'feedback';
+            const colors = modeColors[currentMode];
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.style.backgroundColor = colors.option1;
+                btn.style.boxShadow = "0 4px 0 rgba(0, 0, 0, 0.2)";
+            });
+            
+            // Gap zurücksetzen
+            wordGapElement.style.backgroundColor = 'white';
+            wordGapElement.style.color = '#0066cc';
             
             // Nächster Wort-Button deaktivieren
             nextButton.disabled = true;
@@ -425,7 +609,7 @@
                 return;
             }
             
-            const currentWord = words[currentWordIndex % words.length];
+            const currentWord = currentWords[currentWordIndex % currentWords.length];
             const isCorrect = selectedOption === currentWord.correct;
             
             // Feedback anzeigen
@@ -457,7 +641,7 @@
         
         // Tipp anzeigen
         function showHint() {
-            const currentWord = words[currentWordIndex % words.length];
+            const currentWord = currentWords[currentWordIndex % currentWords.length];
             feedbackElement.textContent = `Tipp: Verlängere das Wort zu "${currentWord.hint}". Dann hörst du den richtigen Buchstaben!`;
             feedbackElement.className = 'feedback hint';
         }
@@ -467,24 +651,34 @@
             currentWordIndex++;
             wordCount++;
             
-            if (wordCount > totalWords) {
-                // Übung beendet
-                feedbackElement.textContent = `Super! Du hast alle ${totalWords} Wörter bearbeitet. Du hattest ${correctCount} richtige und ${incorrectCount} falsche Antworten.`;
+            if (wordCount >= wordsPerRound) {
+                // Runde beendet
+                const accuracy = Math.round((correctCount / (correctCount + incorrectCount)) * 100) || 0;
+                feedbackElement.textContent = `Super! Du hast ${wordsPerRound} Wörter bearbeitet. Du hattest ${correctCount} richtige und ${incorrectCount} falsche Antworten (${accuracy}% richtig).`;
                 feedbackElement.className = 'feedback correct';
                 nextButton.disabled = true;
                 checkButton.disabled = true;
                 hintButton.disabled = true;
-                optionButtons.forEach(btn => btn.disabled = true);
+                document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
                 return;
             }
             
-            loadWord(currentWordIndex);
+            loadWord();
             updateStats();
             updateProgressBar();
             
             // Gap zurücksetzen
             wordGapElement.style.backgroundColor = 'white';
             wordGapElement.style.color = '#0066cc';
+        }
+        
+        // Array mischen
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
         }
         
         // Statistik aktualisieren
@@ -496,7 +690,7 @@
         
         // Fortschrittsbalken aktualisieren
         function updateProgressBar() {
-            const progress = (wordCount / totalWords) * 100;
+            const progress = (wordCount / wordsPerRound) * 100;
             progressBarElement.style.width = `${progress}%`;
         }
         
