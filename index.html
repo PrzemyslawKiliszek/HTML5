@@ -917,4 +917,91 @@
                 incorrectCount++;
                 
                 // Lücken rot markieren
-                if (currentMode === "nouns
+                if (currentMode === "nouns") {
+                    nounSingularGap.style.backgroundColor = '#f8d7da';
+                    nounPluralGap.style.backgroundColor = '#f8d7da';
+                } else {
+                    verbInfinitiveGap.style.backgroundColor = '#f8d7da';
+                    verbConjugatedGap.style.backgroundColor = '#f8d7da';
+                }
+                
+                // Richtigen Buchstaben anzeigen
+                setTimeout(() => {
+                    if (currentMode === "nouns") {
+                        nounSingularGap.textContent = correctLetter;
+                        nounPluralGap.textContent = correctLetter;
+                        nounSingularGap.style.color = '#155724';
+                        nounPluralGap.style.color = '#155724';
+                    } else {
+                        verbInfinitiveGap.textContent = correctLetter;
+                        verbConjugatedGap.textContent = correctLetter;
+                        verbInfinitiveGap.style.color = '#155724';
+                        verbConjugatedGap.style.color = '#155724';
+                    }
+                }, 500);
+            }
+            
+            // Buttons aktualisieren
+            checkButton.disabled = true;
+            nextButton.disabled = false;
+            
+            // Statistik aktualisieren
+            updateStats();
+        }
+        
+        // Tipp anzeigen
+        function showHint() {
+            const currentWord = currentWords[currentWordIndex % currentWords.length];
+            feedbackElement.textContent = `Tipp: ${currentWord.hint}`;
+            feedbackElement.className = 'feedback hint';
+        }
+        
+        // Nächstes Wort laden
+        function nextWord() {
+            currentWordIndex++;
+            wordCount++;
+            
+            if (wordCount >= wordsPerRound) {
+                // Runde beendet
+                const accuracy = Math.round((correctCount / (correctCount + incorrectCount)) * 100) || 0;
+                feedbackElement.textContent = `Super! Du hast ${wordsPerRound} Wörter bearbeitet. Du hattest ${correctCount} richtige und ${incorrectCount} falsche Antworten (${accuracy}% richtig).`;
+                feedbackElement.className = 'feedback correct';
+                nextButton.disabled = true;
+                checkButton.disabled = true;
+                hintButton.disabled = true;
+                document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+                return;
+            }
+            
+            loadWord();
+            updateStats();
+            updateProgressBar();
+        }
+        
+        // Array mischen
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        // Statistik aktualisieren
+        function updateStats() {
+            correctCountElement.textContent = correctCount;
+            incorrectCountElement.textContent = incorrectCount;
+            wordCountElement.textContent = wordCount;
+        }
+        
+        // Fortschrittsbalken aktualisieren
+        function updateProgressBar() {
+            const progress = (wordCount / wordsPerRound) * 100;
+            progressBarElement.style.width = `${progress}%`;
+        }
+        
+        // App starten
+        init();
+    </script>
+</body>
+</html>
