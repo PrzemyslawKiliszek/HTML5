@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wörter verlängern - Übungs-App</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f7ff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 150, 0.1);
+            border: 5px solid #4d94ff;
+        }
+        
+        h1 {
+            color: #0066cc;
+            text-align: center;
+            margin-top: 0;
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 0 #cce0ff;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #3399ff;
+            margin-top: -10px;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+        }
+        
+        .instructions {
+            background-color: #e6f2ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 5px solid #4d94ff;
+        }
+        
+        .instructions h3 {
+            margin-top: 0;
+            color: #004d99;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .word-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f5faff;
+            border-radius: 15px;
+            border: 3px dashed #99ccff;
+        }
+        
+        .word-part {
+            font-size: 2rem;
+            font-weight: bold;
+            padding: 5px 10px;
+        }
+        
+        .word-gap {
+            width: 60px;
+            height: 60px;
+            border: 3px solid #0066cc;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #0066cc;
+        }
+        
+        .options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .option-btn {
+            width: 70px;
+            height: 70px;
+            border: none;
+            border-radius: 15px;
+            background-color: #ccddff;
+            color: #003366;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 0 #99aaff;
+        }
+        
+        .option-btn:hover {
+            background-color: #b3ccff;
+            transform: translateY(-2px);
+        }
+        
+        .option-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #99aaff;
+        }
+        
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        #check-btn {
+            background-color: #4CAF50;
+            color: white;
+            box-shadow: 0 4px 0 #3d8b40;
+        }
+        
+        #check-btn:hover {
+            background-color: #45a049;
+        }
+        
+        #next-btn {
+            background-color: #008CBA;
+            color: white;
+            box-shadow: 0 4px 0 #00688B;
+        }
+        
+        #next-btn:hover {
+            background-color: #0077a3;
+        }
+        
+        #hint-btn {
+            background-color: #ff9800;
+            color: white;
+            box-shadow: 0 4px 0 #cc7a00;
+        }
+        
+        #hint-btn:hover {
+            background-color: #e68a00;
+        }
+        
+        .feedback {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        
+        .hint {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #e6f2ff;
+            border-radius: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .progress-container {
+            margin-top: 20px;
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .word-type {
+            text-align: center;
+            font-size: 1.3rem;
+            color: #6600cc;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .word-type.noun {
+            color: #cc0066;
+        }
+        
+        .word-type.verb {
+            color: #009933;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .word-part {
+                font-size: 1.6rem;
+            }
+            
+            .option-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Wörter verlängern</h1>
+        <div class="subtitle">2. Klasse - Übe b/p, d/t, g/k</div>
+        
+        <div class="instructions">
+            <h3>So geht's:</h3>
+            <ul>
+                <li>Schau dir das Wort mit Lücke an und überlege, welcher Buchstabe fehlt</li>
+                <li>Verlängere das Wort im Kopf, dann hörst du welcher Buchstabe richtig ist</li>
+                <li>Beispiel: "We__" (Weg) wird zu "We-ge" → Also ist "g" richtig, nicht "k"</li>
+                <li>Klicke auf den richtigen Buchstaben und prüfe deine Antwort</li>
+            </ul>
+        </div>
+        
+        <div class="word-type" id="word-type">Nomen</div>
+        
+        <div class="word-container">
+            <div class="word-part" id="word-part1">We</div>
+            <div class="word-gap" id="word-gap">?</div>
+            <div class="word-part" id="word-part2"></div>
+        </div>
+        
+        <div class="options">
+            <button class="option-btn" data-option="b">b</button>
+            <button class="option-btn" data-option="p">p</button>
+            <button class="option-btn" data-option="d">d</button>
+            <button class="option-btn" data-option="t">t</button>
+            <button class="option-btn" data-option="g">g</button>
+            <button class="option-btn" data-option="k">k</button>
+        </div>
+        
+        <div class="btn-group">
+            <button class="action-btn" id="hint-btn">Tipp</button>
+            <button class="action-btn" id="check-btn">Prüfen</button>
+            <button class="action-btn" id="next-btn">Nächstes Wort</button>
+        </div>
+        
+        <div class="feedback" id="feedback">
+            Wähle einen Buchstaben und klicke auf "Prüfen"
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="stats">
+            <div>Richtig: <span id="correct-count">0</span></div>
+            <div>Falsch: <span id="incorrect-count">0</span></div>
+            <div>Wörter: <span id="word-count">1</span>/10</div>
+        </div>
+    </div>
+
+    <script>
+        // Datenbank mit Übungswörtern
+        const words = [
+            // Nomen
+            { word: "We_", part1: "We", part2: "", gapIndex: 2, correct: "g", type: "Nomen", hint: "Wege", fullWord: "Weg" },
+            { word: "Ta_", part1: "Ta", part2: "", gapIndex: 2, correct: "g", type: "Nomen", hint: "Tage", fullWord: "Tag" },
+            { word: "Se_el", part1: "Se", part2: "el", gapIndex: 2, correct: "g", type: "Nomen", hint: "Segel", fullWord: "Segel" },
+            { word: "Hu_", part1: "Hu", part2: "", gapIndex: 2, correct: "b", type: "Nomen", hint: "Hübe", fullWord: "Hub" },
+            { word: "Lam_", part1: "Lam", part2: "", gapIndex: 3, correct: "b", type: "Nomen", hint: "Lämmer", fullWord: "Lamm" },
+            { word: "Gru_", part1: "Gru", part2: "", gapIndex: 3, correct: "b", type: "Nomen", hint: "Grübe", fullWord: "Grub" },
+            
+            // Verben
+            { word: "re_nen", part1: "re", part2: "nen", gapIndex: 2, correct: "d", type: "Verb", hint: "reden", fullWord: "reden" },
+            { word: "rei_en", part1: "rei", part2: "en", gapIndex: 3, correct: "t", type: "Verb", hint: "reiten", fullWord: "reiten" },
+            { word: "lau_en", part1: "lau", part2: "en", gapIndex: 3, correct: "f", type: "Verb", hint: "laufen", fullWord: "laufen" },
+            { word: "sa_en", part1: "sa", part2: "en", gapIndex: 2, correct: "g", type: "Verb", hint: "sagen", fullWord: "sagen" },
+            { word: "ha_en", part1: "ha", part2: "en", gapIndex: 2, correct: "b", type: "Verb", hint: "haben", fullWord: "haben" },
+            { word: "packe_", part1: "packe", part2: "", gapIndex: 5, correct: "n", type: "Verb", hint: "packen", fullWord: "packen" }
+        ];
+        
+        // App-Zustand
+        let currentWordIndex = 0;
+        let selectedOption = null;
+        let correctCount = 0;
+        let incorrectCount = 0;
+        let wordCount = 1;
+        const totalWords = 10;
+        
+        // DOM-Elemente
+        const wordTypeElement = document.getElementById('word-type');
+        const wordPart1Element = document.getElementById('word-part1');
+        const wordPart2Element = document.getElementById('word-part2');
+        const wordGapElement = document.getElementById('word-gap');
+        const optionButtons = document.querySelectorAll('.option-btn');
+        const checkButton = document.getElementById('check-btn');
+        const nextButton = document.getElementById('next-btn');
+        const hintButton = document.getElementById('hint-btn');
+        const feedbackElement = document.getElementById('feedback');
+        const correctCountElement = document.getElementById('correct-count');
+        const incorrectCountElement = document.getElementById('incorrect-count');
+        const wordCountElement = document.getElementById('word-count');
+        const progressBarElement = document.getElementById('progress-bar');
+        
+        // Initialisierung
+        function init() {
+            loadWord(currentWordIndex);
+            updateStats();
+            updateProgressBar();
+            
+            // Event-Listener für Option-Buttons
+            optionButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Markiere den ausgewählten Button
+                    optionButtons.forEach(btn => btn.style.backgroundColor = '#ccddff');
+                    button.style.backgroundColor = '#99ccff';
+                    selectedOption = button.getAttribute('data-option');
+                    wordGapElement.textContent = selectedOption;
+                    feedbackElement.textContent = `Ausgewählt: ${selectedOption}. Klicke auf "Prüfen"!`;
+                    feedbackElement.className = 'feedback';
+                });
+            });
+            
+            // Event-Listener für Aktions-Buttons
+            checkButton.addEventListener('click', checkAnswer);
+            nextButton.addEventListener('click', nextWord);
+            hintButton.addEventListener('click', showHint);
+        }
+        
+        // Wort laden
+        function loadWord(index) {
+            const wordData = words[index % words.length];
+            
+            // Wortteile anzeigen
+            wordPart1Element.textContent = wordData.part1;
+            wordPart2Element.textContent = wordData.part2;
+            wordGapElement.textContent = "?";
+            
+            // Worttyp anzeigen
+            wordTypeElement.textContent = wordData.type;
+            wordTypeElement.className = `word-type ${wordData.type === 'Nomen' ? 'noun' : 'verb'}`;
+            
+            // Auswahl zurücksetzen
+            selectedOption = null;
+            optionButtons.forEach(btn => btn.style.backgroundColor = '#ccddff');
+            feedbackElement.textContent = "Wähle einen Buchstaben und klicke auf 'Prüfen'";
+            feedbackElement.className = 'feedback';
+            
+            // Nächster Wort-Button deaktivieren
+            nextButton.disabled = true;
+            checkButton.disabled = false;
+        }
+        
+        // Antwort prüfen
+        function checkAnswer() {
+            if (!selectedOption) {
+                feedbackElement.textContent = "Bitte wähle zuerst einen Buchstaben aus!";
+                feedbackElement.className = 'feedback hint';
+                return;
+            }
+            
+            const currentWord = words[currentWordIndex % words.length];
+            const isCorrect = selectedOption === currentWord.correct;
+            
+            // Feedback anzeigen
+            if (isCorrect) {
+                feedbackElement.textContent = `Richtig! "${currentWord.part1 + currentWord.correct + currentWord.part2}" heißt "${currentWord.fullWord}". Gut gemacht!`;
+                feedbackElement.className = 'feedback correct';
+                correctCount++;
+                wordGapElement.style.backgroundColor = '#d4edda';
+            } else {
+                feedbackElement.textContent = `Fast! Richtig wäre "${currentWord.correct}" gewesen. "${currentWord.part1 + currentWord.correct + currentWord.part2}" heißt "${currentWord.fullWord}".`;
+                feedbackElement.className = 'feedback incorrect';
+                incorrectCount++;
+                wordGapElement.style.backgroundColor = '#f8d7da';
+                
+                // Richtigen Buchstaben anzeigen
+                setTimeout(() => {
+                    wordGapElement.textContent = currentWord.correct;
+                    wordGapElement.style.color = '#155724';
+                }, 500);
+            }
+            
+            // Buttons aktualisieren
+            checkButton.disabled = true;
+            nextButton.disabled = false;
+            
+            // Statistik aktualisieren
+            updateStats();
+        }
+        
+        // Tipp anzeigen
+        function showHint() {
+            const currentWord = words[currentWordIndex % words.length];
+            feedbackElement.textContent = `Tipp: Verlängere das Wort zu "${currentWord.hint}". Dann hörst du den richtigen Buchstaben!`;
+            feedbackElement.className = 'feedback hint';
+        }
+        
+        // Nächstes Wort laden
+        function nextWord() {
+            currentWordIndex++;
+            wordCount++;
+            
+            if (wordCount > totalWords) {
+                // Übung beendet
+                feedbackElement.textContent = `Super! Du hast alle ${totalWords} Wörter bearbeitet. Du hattest ${correctCount} richtige und ${incorrectCount} falsche Antworten.`;
+                feedbackElement.className = 'feedback correct';
+                nextButton.disabled = true;
+                checkButton.disabled = true;
+                hintButton.disabled = true;
+                optionButtons.forEach(btn => btn.disabled = true);
+                return;
+            }
+            
+            loadWord(currentWordIndex);
+            updateStats();
+            updateProgressBar();
+            
+            // Gap zurücksetzen
+            wordGapElement.style.backgroundColor = 'white';
+            wordGapElement.style.color = '#0066cc';
+        }
+        
+        // Statistik aktualisieren
+        function updateStats() {
+            correctCountElement.textContent = correctCount;
+            incorrectCountElement.textContent = incorrectCount;
+            wordCountElement.textContent = wordCount;
+        }
+        
+        // Fortschrittsbalken aktualisieren
+        function updateProgressBar() {
+            const progress = (wordCount / totalWords) * 100;
+            progressBarElement.style.width = `${progress}%`;
+        }
+        
+        // App starten
+        init();
+    </script>
+</body>
+</html>
