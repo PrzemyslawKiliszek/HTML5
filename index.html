@@ -100,18 +100,6 @@
             margin-bottom: 8px;
         }
         
-        .letter-pair-display {
-            text-align: center;
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #cc0066;
-            margin-bottom: 20px;
-            padding: 10px;
-            background-color: #fff0f5;
-            border-radius: 15px;
-            border: 3px solid #ff99cc;
-        }
-        
         .word-type-display {
             text-align: center;
             font-size: 1.5rem;
@@ -215,35 +203,52 @@
             min-width: 50px;
         }
         
-        .options {
+        /* Buchstabenauswahl - NUR 2 Buchstaben */
+        .letters-section {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .letters-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #0066cc;
+            margin-bottom: 20px;
+        }
+        
+        .letter-options {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin-bottom: 25px;
+            gap: 40px;
             flex-wrap: wrap;
         }
         
-        .option-btn {
-            width: 70px;
-            height: 70px;
+        .letter-btn {
+            width: 80px;
+            height: 80px;
             border: none;
-            border-radius: 15px;
+            border-radius: 20px;
             color: white;
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
-        }
-        
-        .option-btn:hover {
-            transform: translateY(-2px);
             box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
         }
         
-        .option-btn:active {
+        .letter-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .letter-btn:active {
             transform: translateY(2px);
-            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+            box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .letter-btn.selected {
+            box-shadow: 0 0 0 5px #ff9900, 0 6px 0 rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
         }
         
         .btn-group {
@@ -360,10 +365,10 @@
                 font-size: 1.5rem;
             }
             
-            .option-btn {
-                width: 60px;
-                height: 60px;
-                font-size: 1.6rem;
+            .letter-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
             }
             
             .mode-btn {
@@ -393,8 +398,6 @@
             <button class="mode-btn" data-mode="verbs">Verben</button>
         </div>
         
-        <div class="letter-pair-display" id="letter-pair-display">Wähle b/p, d/t oder g/k</div>
-        
         <div id="word-type-display" class="word-type-display noun">Nomen: Singular und Plural</div>
         
         <div class="instructions">
@@ -405,7 +408,7 @@
                     <li>Verlängere das Wort im Kopf, um den richtigen Buchstaben zu hören</li>
                     <li>Beispiel: "das Sie_" wird zu "Sie-be" → Also ist "b" richtig</li>
                     <li>Beispiel: "die __" wird zu "Bil-der" → Also ist "d" richtig</li>
-                    <li>Wähle den richtigen Buchstaben für beide Lücken</li>
+                    <li>Wähle den richtigen Buchstaben unten aus</li>
                 </ul>
             </div>
             <div id="verbs-instructions" style="display: none;">
@@ -414,7 +417,7 @@
                     <li>Verlängere das Wort im Kopf, um den richtigen Buchstaben zu hören</li>
                     <li>Beispiel: "schie_en" wird zu "schie-ben" → Also ist "b" richtig</li>
                     <li>Beispiel: "er schie_" wird zu "er schieb-t" → Also ist "b" richtig</li>
-                    <li>Wähle den richtigen Buchstaben für beide Lücken</li>
+                    <li>Wähle den richtigen Buchstaben unten aus</li>
                 </ul>
             </div>
         </div>
@@ -460,8 +463,12 @@
             </div>
         </div>
         
-        <div class="options" id="options-container">
-            <!-- Option buttons werden dynamisch erstellt -->
+        <!-- Buchstabenauswahl - NUR 2 Buchstaben -->
+        <div class="letters-section">
+            <div class="letters-title" id="letters-title">Wähle den richtigen Buchstaben:</div>
+            <div class="letter-options" id="letter-options">
+                <!-- Hier werden nur 2 Buchstaben angezeigt -->
+            </div>
         </div>
         
         <div class="btn-group">
@@ -471,7 +478,7 @@
         </div>
         
         <div class="feedback" id="feedback">
-            Wähle zuerst Nomen oder Verben oben aus
+            Wähle einen Buchstaben aus und klicke auf "Prüfen"
         </div>
         
         <div class="progress-container">
@@ -486,145 +493,167 @@
     </div>
 
     <script>
-        // Datenbank mit Übungswörtern
+        // Datenbank mit Übungswörtern - KORRIGIERTE VERBEN
         const wordGroups = {
-            // Nomen (Singular/Plural)
+            // Nomen (Singular/Plural) - FUNKTIONIERT BEREITS
             nouns: [
                 { 
                     singular: { part1: "Sie", part2: "", gapIndex: 3, correct: "b" },
                     plural: { part1: "Sie", part2: "e", gapIndex: 3, correct: "b" },
                     fullWord: "Sieb",
-                    hint: "Singular: Sieb (wie Sie-be), Plural: Siebe"
+                    hint: "Singular: Sieb (wie Sie-be), Plural: Siebe",
+                    letterPair: ["b", "p"]
                 },
                 { 
                     singular: { part1: "Kal", part2: "", gapIndex: 3, correct: "b" },
                     plural: { part1: "Käl", part2: "er", gapIndex: 3, correct: "b" },
                     fullWord: "Kalb",
-                    hint: "Singular: Kalb (wie Kal-be), Plural: Kälber"
+                    hint: "Singular: Kalb (wie Kal-be), Plural: Kälber",
+                    letterPair: ["b", "p"]
                 },
                 { 
                     singular: { part1: "Sta", part2: "", gapIndex: 3, correct: "b" },
                     plural: { part1: "Stä", part2: "e", gapIndex: 3, correct: "b" },
                     fullWord: "Stab",
-                    hint: "Singular: Stab (wie Sta-be), Plural: Stäbe"
+                    hint: "Singular: Stab (wie Sta-be), Plural: Stäbe",
+                    letterPair: ["b", "p"]
                 },
                 { 
                     singular: { part1: "Kor", part2: "", gapIndex: 3, correct: "b" },
                     plural: { part1: "Kör", part2: "e", gapIndex: 3, correct: "b" },
                     fullWord: "Korb",
-                    hint: "Singular: Korb (wie Kor-be), Plural: Körbe"
+                    hint: "Singular: Korb (wie Kor-be), Plural: Körbe",
+                    letterPair: ["b", "p"]
                 },
                 { 
                     singular: { part1: "Gra", part2: "", gapIndex: 3, correct: "b" },
                     plural: { part1: "Grä", part2: "er", gapIndex: 3, correct: "b" },
                     fullWord: "Grab",
-                    hint: "Singular: Grab (wie Gra-ber), Plural: Gräber"
+                    hint: "Singular: Grab (wie Gra-ber), Plural: Gräber",
+                    letterPair: ["b", "p"]
                 },
                 { 
                     singular: { part1: "Ra", part2: "", gapIndex: 2, correct: "d" },
                     plural: { part1: "Rä", part2: "er", gapIndex: 2, correct: "d" },
                     fullWord: "Rad",
-                    hint: "Singular: Rad (wie Rä-der), Plural: Räder"
+                    hint: "Singular: Rad (wie Rä-der), Plural: Räder",
+                    letterPair: ["d", "t"]
                 },
                 { 
                     singular: { part1: "Bil", part2: "", gapIndex: 3, correct: "d" },
                     plural: { part1: "Bil", part2: "er", gapIndex: 3, correct: "d" },
                     fullWord: "Bild",
-                    hint: "Singular: Bild (wie Bil-der), Plural: Bilder"
+                    hint: "Singular: Bild (wie Bil-der), Plural: Bilder",
+                    letterPair: ["d", "t"]
                 },
                 { 
                     singular: { part1: "Stif", part2: "", gapIndex: 4, correct: "t" },
                     plural: { part1: "Stif", part2: "e", gapIndex: 4, correct: "t" },
                     fullWord: "Stift",
-                    hint: "Singular: Stift (wie Stif-te), Plural: Stifte"
+                    hint: "Singular: Stift (wie Stif-te), Plural: Stifte",
+                    letterPair: ["d", "t"]
                 },
                 { 
                     singular: { part1: "Pfer", part2: "", gapIndex: 4, correct: "d" },
                     plural: { part1: "Pfer", part2: "e", gapIndex: 4, correct: "d" },
                     fullWord: "Pferd",
-                    hint: "Singular: Pferd (wie Pfer-de), Plural: Pferde"
+                    hint: "Singular: Pferd (wie Pfer-de), Plural: Pferde",
+                    letterPair: ["d", "t"]
                 },
                 { 
                     singular: { part1: "Bro", part2: "", gapIndex: 3, correct: "t" },
                     plural: { part1: "Bro", part2: "e", gapIndex: 3, correct: "t" },
                     fullWord: "Brot",
-                    hint: "Singular: Brot (wie Bro-te), Plural: Brote"
+                    hint: "Singular: Brot (wie Bro-te), Plural: Brote",
+                    letterPair: ["d", "t"]
                 },
                 { 
                     singular: { part1: "Ta", part2: "", gapIndex: 2, correct: "g" },
                     plural: { part1: "Ta", part2: "e", gapIndex: 2, correct: "g" },
                     fullWord: "Tag",
-                    hint: "Singular: Tag (wie Ta-ge), Plural: Tage"
+                    hint: "Singular: Tag (wie Ta-ge), Plural: Tage",
+                    letterPair: ["g", "k"]
                 },
                 { 
                     singular: { part1: "Ber", part2: "", gapIndex: 3, correct: "g" },
                     plural: { part1: "Ber", part2: "e", gapIndex: 3, correct: "g" },
                     fullWord: "Berg",
-                    hint: "Singular: Berg (wie Ber-ge), Plural: Berge"
+                    hint: "Singular: Berg (wie Ber-ge), Plural: Berge",
+                    letterPair: ["g", "k"]
                 },
                 { 
                     singular: { part1: "We", part2: "", gapIndex: 2, correct: "g" },
                     plural: { part1: "We", part2: "e", gapIndex: 2, correct: "g" },
                     fullWord: "Weg",
-                    hint: "Singular: Weg (wie We-ge), Plural: Wege"
+                    hint: "Singular: Weg (wie We-ge), Plural: Wege",
+                    letterPair: ["g", "k"]
                 },
                 { 
                     singular: { part1: "Zwer", part2: "", gapIndex: 4, correct: "g" },
                     plural: { part1: "Zwer", part2: "e", gapIndex: 4, correct: "g" },
                     fullWord: "Zwerg",
-                    hint: "Singular: Zwerg (wie Zwer-ge), Plural: Zwerge"
+                    hint: "Singular: Zwerg (wie Zwer-ge), Plural: Zwerge",
+                    letterPair: ["g", "k"]
                 },
                 { 
                     singular: { part1: "Fabri", part2: "", gapIndex: 5, correct: "k" },
                     plural: { part1: "Fabri", part2: "en", gapIndex: 5, correct: "k" },
                     fullWord: "Fabrik",
-                    hint: "Singular: Fabrik (wie Fabri-ken), Plural: Fabriken"
+                    hint: "Singular: Fabrik (wie Fabri-ken), Plural: Fabriken",
+                    letterPair: ["g", "k"]
                 }
             ],
             
-            // Verben (Infinitiv/Personalform)
+            // Verben (Infinitiv/Personalform) - KORRIGIERT
             verbs: [
                 { 
-                    infinitive: { part1: "schie", part2: "en", gapIndex: 5, correct: "b" },
-                    conjugated: { part1: "schie", part2: "t", gapIndex: 5, correct: "b" },
+                    infinitive: { part1: "schie", part2: "en", correct: "b" },
+                    conjugated: { part1: "schie", part2: "t", correct: "b" },
                     fullWord: "schieben",
-                    hint: "Infinitiv: schieben (wie schie-ben), er schiebt"
+                    hint: "Infinitiv: schieben (wie schie-ben), er schiebt",
+                    letterPair: ["b", "p"]
                 },
                 { 
-                    infinitive: { part1: "kle", part2: "en", gapIndex: 3, correct: "b" },
-                    conjugated: { part1: "kle", part2: "t", gapIndex: 3, correct: "b" },
+                    infinitive: { part1: "kle", part2: "en", correct: "b" },
+                    conjugated: { part1: "kle", part2: "t", correct: "b" },
                     fullWord: "kleben",
-                    hint: "Infinitiv: kleben (wie kle-ben), er klebt"
+                    hint: "Infinitiv: kleben (wie kle-ben), er klebt",
+                    letterPair: ["b", "p"]
                 },
                 { 
-                    infinitive: { part1: "pie", part2: "en", gapIndex: 3, correct: "p" },
-                    conjugated: { part1: "pie", part2: "t", gapIndex: 3, correct: "p" },
+                    infinitive: { part1: "pie", part2: "en", correct: "p" },
+                    conjugated: { part1: "pie", part2: "t", correct: "p" },
                     fullWord: "piepen",
-                    hint: "Infinitiv: piepen (wie pie-pen), er piept"
+                    hint: "Infinitiv: piepen (wie pie-pen), er piept",
+                    letterPair: ["b", "p"]
                 },
                 { 
-                    infinitive: { part1: "mer", part2: "en", gapIndex: 3, correct: "k" },
-                    conjugated: { part1: "mer", part2: "t", gapIndex: 3, correct: "k" },
+                    infinitive: { part1: "mer", part2: "en", correct: "k" },
+                    conjugated: { part1: "mer", part2: "t", correct: "k" },
                     fullWord: "merken",
-                    hint: "Infinitiv: merken (wie mer-ken), er merkt"
+                    hint: "Infinitiv: merken (wie mer-ken), er merkt",
+                    letterPair: ["g", "k"]
                 },
                 { 
-                    infinitive: { part1: "wie", part2: "en", gapIndex: 3, correct: "g" },
-                    conjugated: { part1: "wie", part2: "t", gapIndex: 3, correct: "g" },
+                    infinitive: { part1: "wie", part2: "en", correct: "g" },
+                    conjugated: { part1: "wie", part2: "t", correct: "g" },
                     fullWord: "wiegen",
-                    hint: "Infinitiv: wiegen (wie wie-gen), er wiegt"
+                    hint: "Infinitiv: wiegen (wie wie-gen), er wiegt",
+                    letterPair: ["g", "k"]
                 },
                 { 
-                    infinitive: { part1: "par", part2: "en", gapIndex: 3, correct: "k" },
-                    conjugated: { part1: "par", part2: "t", gapIndex: 3, correct: "k" },
+                    infinitive: { part1: "par", part2: "en", correct: "k" },
+                    conjugated: { part1: "par", part2: "t", correct: "k" },
                     fullWord: "parken",
-                    hint: "Infinitiv: parken (wie par-ken), er parkt"
+                    hint: "Infinitiv: parken (wie par-ken), er parkt",
+                    letterPair: ["g", "k"]
                 },
                 { 
-                    infinitive: { part1: "sie", part2: "en", gapIndex: 3, correct: "g" },
-                    conjugated: { part1: "sie", part2: "t", gapIndex: 3, correct: "g" },
+                    infinitive: { part1: "sie", part2: "en", correct: "g" },
+                    conjugated: { part1: "sie", part2: "t", correct: "g" },
                     fullWord: "siegen",
-                    hint: "Infinitiv: siegen (wie sie-gen), er siegt"
+                    hint: "Infinitiv: siegen (wie sie-gen), er siegt",
+                    letterPair: ["g", "k"]
                 }
             ]
         };
@@ -633,7 +662,7 @@
         let currentMode = "nouns";
         let currentWords = [];
         let currentWordIndex = 0;
-        let selectedOption = null;
+        let selectedLetter = null;
         let correctCount = 0;
         let incorrectCount = 0;
         let wordCount = 0;
@@ -641,12 +670,10 @@
         
         // DOM-Elemente
         const wordTypeDisplay = document.getElementById('word-type-display');
-        const letterPairDisplay = document.getElementById('letter-pair-display');
         const nounsInstructions = document.getElementById('nouns-instructions');
         const verbsInstructions = document.getElementById('verbs-instructions');
         const nounsExercise = document.getElementById('nouns-exercise');
         const verbsExercise = document.getElementById('verbs-exercise');
-        const optionsContainer = document.getElementById('options-container');
         const checkButton = document.getElementById('check-btn');
         const nextButton = document.getElementById('next-btn');
         const hintButton = document.getElementById('hint-btn');
@@ -656,6 +683,8 @@
         const wordCountElement = document.getElementById('word-count');
         const progressBarElement = document.getElementById('progress-bar');
         const modeButtons = document.querySelectorAll('.mode-btn');
+        const letterOptionsContainer = document.getElementById('letter-options');
+        const lettersTitle = document.getElementById('letters-title');
         
         // DOM-Elemente für Nomen
         const nounSingularPart1 = document.getElementById('noun-singular-part1');
@@ -717,7 +746,7 @@
                 verbsInstructions.style.display = "none";
                 nounsExercise.style.display = "flex";
                 verbsExercise.style.display = "none";
-                letterPairDisplay.textContent = "Finde den richtigen Buchstaben für Singular und Plural";
+                lettersTitle.textContent = "Wähle den richtigen Buchstaben:";
             } else {
                 wordTypeDisplay.textContent = "Verben: Infinitiv und Personalform";
                 wordTypeDisplay.className = "word-type-display verb";
@@ -725,16 +754,16 @@
                 verbsInstructions.style.display = "block";
                 nounsExercise.style.display = "none";
                 verbsExercise.style.display = "flex";
-                letterPairDisplay.textContent = "Finde den richtigen Buchstaben für Infinitiv und Personalform";
+                lettersTitle.textContent = "Wähle den richtigen Buchstaben:";
             }
-            
-            // Option-Buttons erstellen (basierend auf aktuellen Wörtern)
-            createOptionButtons();
             
             // Erstes Wort laden
             loadWord();
             updateStats();
             updateProgressBar();
+            
+            // Auswahl zurücksetzen
+            selectedLetter = null;
             
             // Feedback zurücksetzen
             feedbackElement.textContent = "Wähle einen Buchstaben und klicke auf 'Prüfen'";
@@ -746,76 +775,51 @@
             hintButton.disabled = false;
         }
         
-        // Option-Buttons erstellen
-        function createOptionButtons() {
-            optionsContainer.innerHTML = '';
+        // Buchstaben-Buttons erstellen (NUR 2 Buchstaben)
+        function createLetterButtons(letterPair) {
+            letterOptionsContainer.innerHTML = '';
             
-            // Basierend auf dem aktuellen Wort bestimmen, welche Buchstaben möglich sind
-            const currentWord = currentWords[currentWordIndex % currentWords.length];
-            let correctLetter = "";
+            // Farben für Buchstaben
+            const colors = {
+                "b": "#ff3366",
+                "p": "#ff6699", 
+                "d": "#339933",
+                "t": "#66cc66",
+                "g": "#3366cc",
+                "k": "#6699ff"
+            };
             
-            if (currentMode === "nouns") {
-                correctLetter = currentWord.singular.correct;
-            } else {
-                correctLetter = currentWord.infinitive.correct;
-            }
-            
-            // Bestimme mögliche Alternativen basierend auf dem korrekten Buchstaben
-            let possibleLetters = [];
-            
-            // b/p Paar
-            if (correctLetter === "b" || correctLetter === "p") {
-                possibleLetters = ["b", "p"];
-            }
-            // d/t Paar
-            else if (correctLetter === "d" || correctLetter === "t") {
-                possibleLetters = ["d", "t"];
-            }
-            // g/k Paar
-            else if (correctLetter === "g" || correctLetter === "k") {
-                possibleLetters = ["g", "k"];
-            }
-            
-            // Für jeden Buchstaben einen Button erstellen
-            possibleLetters.forEach(letter => {
+            // Nur die 2 Buchstaben des Paares anzeigen
+            letterPair.forEach(letter => {
                 const button = document.createElement('button');
-                button.className = 'option-btn';
-                button.setAttribute('data-option', letter);
+                button.className = 'letter-btn';
+                button.setAttribute('data-letter', letter);
                 button.textContent = letter;
-                
-                // Farbe für den Button basierend auf Buchstabenpaar
-                if (letter === "b" || letter === "p") {
-                    button.style.backgroundColor = "#ff3366";
-                } else if (letter === "d" || letter === "t") {
-                    button.style.backgroundColor = "#339933";
-                } else {
-                    button.style.backgroundColor = "#3366cc";
-                }
+                button.style.backgroundColor = colors[letter];
                 
                 button.addEventListener('click', () => {
-                    // Markiere den ausgewählten Button
-                    document.querySelectorAll('.option-btn').forEach(btn => {
-                        btn.style.boxShadow = "0 4px 0 rgba(0, 0, 0, 0.2)";
+                    // Auswahl markieren
+                    document.querySelectorAll('.letter-btn').forEach(btn => {
+                        btn.classList.remove('selected');
                     });
+                    button.classList.add('selected');
                     
-                    button.style.boxShadow = "0 4px 0 #003366";
-                    
-                    selectedOption = letter;
+                    selectedLetter = letter;
                     
                     // Buchstaben in alle Lücken eintragen
                     if (currentMode === "nouns") {
-                        nounSingularGap.textContent = selectedOption;
-                        nounPluralGap.textContent = selectedOption;
+                        nounSingularGap.textContent = selectedLetter;
+                        nounPluralGap.textContent = selectedLetter;
                     } else {
-                        verbInfinitiveGap.textContent = selectedOption;
-                        verbConjugatedGap.textContent = selectedOption;
+                        verbInfinitiveGap.textContent = selectedLetter;
+                        verbConjugatedGap.textContent = selectedLetter;
                     }
                     
-                    feedbackElement.textContent = `Ausgewählt: ${selectedOption}. Klicke auf "Prüfen"!`;
+                    feedbackElement.textContent = `Ausgewählt: ${selectedLetter}. Klicke auf "Prüfen"!`;
                     feedbackElement.className = 'feedback';
                 });
                 
-                optionsContainer.appendChild(button);
+                letterOptionsContainer.appendChild(button);
             });
         }
         
@@ -844,7 +848,7 @@
                 nounPluralGap.style.backgroundColor = 'white';
                 nounPluralGap.style.color = '#0066cc';
             } else {
-                // Verben anzeigen
+                // Verben anzeigen - KORRIGIERT
                 verbInfinitivePart1.textContent = wordData.infinitive.part1;
                 verbInfinitivePart2.textContent = wordData.infinitive.part2;
                 verbInfinitiveGap.textContent = "?";
@@ -860,11 +864,11 @@
                 verbConjugatedGap.style.color = '#0066cc';
             }
             
-            // Option-Buttons neu erstellen
-            createOptionButtons();
+            // Buchstaben-Buttons für dieses Wort erstellen (NUR 2)
+            createLetterButtons(wordData.letterPair);
             
             // Auswahl zurücksetzen
-            selectedOption = null;
+            selectedLetter = null;
             
             // Nächster Wort-Button deaktivieren
             nextButton.disabled = true;
@@ -873,7 +877,7 @@
         
         // Antwort prüfen
         function checkAnswer() {
-            if (!selectedOption) {
+            if (!selectedLetter) {
                 feedbackElement.textContent = "Bitte wähle zuerst einen Buchstaben aus!";
                 feedbackElement.className = 'feedback hint';
                 return;
@@ -885,14 +889,14 @@
             
             if (currentMode === "nouns") {
                 // Prüfe Singular und Plural
-                const singularCorrect = selectedOption === currentWord.singular.correct;
-                const pluralCorrect = selectedOption === currentWord.plural.correct;
+                const singularCorrect = selectedLetter === currentWord.singular.correct;
+                const pluralCorrect = selectedLetter === currentWord.plural.correct;
                 isCorrect = singularCorrect && pluralCorrect;
                 correctLetter = currentWord.singular.correct;
             } else {
-                // Prüfe Infinitiv und Personalform
-                const infinitiveCorrect = selectedOption === currentWord.infinitive.correct;
-                const conjugatedCorrect = selectedOption === currentWord.conjugated.correct;
+                // Prüfe Infinitiv und Personalform - KORRIGIERT
+                const infinitiveCorrect = selectedLetter === currentWord.infinitive.correct;
+                const conjugatedCorrect = selectedLetter === currentWord.conjugated.correct;
                 isCorrect = infinitiveCorrect && conjugatedCorrect;
                 correctLetter = currentWord.infinitive.correct;
             }
@@ -969,7 +973,7 @@
                 nextButton.disabled = true;
                 checkButton.disabled = true;
                 hintButton.disabled = true;
-                document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+                document.querySelectorAll('.letter-btn').forEach(btn => btn.disabled = true);
                 return;
             }
             
