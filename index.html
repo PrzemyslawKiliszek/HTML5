@@ -488,123 +488,208 @@
         <div class="stats">
             <div>Richtig: <span id="correct-count">0</span></div>
             <div>Falsch: <span id="incorrect-count">0</span></div>
-            <div>Wörter: <span id="word-count">0</span>/8</div>
+            <div>Wörter: <span id="word-count">0</span>/10</div>
         </div>
     </div>
 
     <script>
-        // Datenbank mit Übungswörtern - KORRIGIERTE VERBEN
+        // Datenbank mit Übungswörtern - ERWEITERT
         const wordGroups = {
-            // Nomen (Singular/Plural) - FUNKTIONIERT BEREITS
+            // Nomen (Singular/Plural) - ERWEITERT
             nouns: [
                 { 
-                    singular: { part1: "Sie", part2: "", gapIndex: 3, correct: "b" },
-                    plural: { part1: "Sie", part2: "e", gapIndex: 3, correct: "b" },
+                    singular: { part1: "Sie", part2: "", correct: "b" },
+                    plural: { part1: "Sie", part2: "e", correct: "b" },
                     fullWord: "Sieb",
                     hint: "Singular: Sieb (wie Sie-be), Plural: Siebe",
                     letterPair: ["b", "p"]
                 },
                 { 
-                    singular: { part1: "Kal", part2: "", gapIndex: 3, correct: "b" },
-                    plural: { part1: "Käl", part2: "er", gapIndex: 3, correct: "b" },
+                    singular: { part1: "Kal", part2: "", correct: "b" },
+                    plural: { part1: "Käl", part2: "er", correct: "b" },
                     fullWord: "Kalb",
                     hint: "Singular: Kalb (wie Kal-be), Plural: Kälber",
                     letterPair: ["b", "p"]
                 },
                 { 
-                    singular: { part1: "Sta", part2: "", gapIndex: 3, correct: "b" },
-                    plural: { part1: "Stä", part2: "e", gapIndex: 3, correct: "b" },
+                    singular: { part1: "Sta", part2: "", correct: "b" },
+                    plural: { part1: "Stä", part2: "e", correct: "b" },
                     fullWord: "Stab",
                     hint: "Singular: Stab (wie Sta-be), Plural: Stäbe",
                     letterPair: ["b", "p"]
                 },
                 { 
-                    singular: { part1: "Kor", part2: "", gapIndex: 3, correct: "b" },
-                    plural: { part1: "Kör", part2: "e", gapIndex: 3, correct: "b" },
+                    singular: { part1: "Kor", part2: "", correct: "b" },
+                    plural: { part1: "Kör", part2: "e", correct: "b" },
                     fullWord: "Korb",
                     hint: "Singular: Korb (wie Kor-be), Plural: Körbe",
                     letterPair: ["b", "p"]
                 },
                 { 
-                    singular: { part1: "Gra", part2: "", gapIndex: 3, correct: "b" },
-                    plural: { part1: "Grä", part2: "er", gapIndex: 3, correct: "b" },
+                    singular: { part1: "Gra", part2: "", correct: "b" },
+                    plural: { part1: "Grä", part2: "er", correct: "b" },
                     fullWord: "Grab",
                     hint: "Singular: Grab (wie Gra-ber), Plural: Gräber",
                     letterPair: ["b", "p"]
                 },
                 { 
-                    singular: { part1: "Ra", part2: "", gapIndex: 2, correct: "d" },
-                    plural: { part1: "Rä", part2: "er", gapIndex: 2, correct: "d" },
+                    singular: { part1: "Ra", part2: "", correct: "d" },
+                    plural: { part1: "Rä", part2: "er", correct: "d" },
                     fullWord: "Rad",
                     hint: "Singular: Rad (wie Rä-der), Plural: Räder",
                     letterPair: ["d", "t"]
                 },
                 { 
-                    singular: { part1: "Bil", part2: "", gapIndex: 3, correct: "d" },
-                    plural: { part1: "Bil", part2: "er", gapIndex: 3, correct: "d" },
+                    singular: { part1: "Bil", part2: "", correct: "d" },
+                    plural: { part1: "Bil", part2: "er", correct: "d" },
                     fullWord: "Bild",
                     hint: "Singular: Bild (wie Bil-der), Plural: Bilder",
                     letterPair: ["d", "t"]
                 },
                 { 
-                    singular: { part1: "Stif", part2: "", gapIndex: 4, correct: "t" },
-                    plural: { part1: "Stif", part2: "e", gapIndex: 4, correct: "t" },
+                    singular: { part1: "Stif", part2: "", correct: "t" },
+                    plural: { part1: "Stif", part2: "e", correct: "t" },
                     fullWord: "Stift",
                     hint: "Singular: Stift (wie Stif-te), Plural: Stifte",
                     letterPair: ["d", "t"]
                 },
                 { 
-                    singular: { part1: "Pfer", part2: "", gapIndex: 4, correct: "d" },
-                    plural: { part1: "Pfer", part2: "e", gapIndex: 4, correct: "d" },
+                    singular: { part1: "Pfer", part2: "", correct: "d" },
+                    plural: { part1: "Pfer", part2: "e", correct: "d" },
                     fullWord: "Pferd",
                     hint: "Singular: Pferd (wie Pfer-de), Plural: Pferde",
                     letterPair: ["d", "t"]
                 },
                 { 
-                    singular: { part1: "Bro", part2: "", gapIndex: 3, correct: "t" },
-                    plural: { part1: "Bro", part2: "e", gapIndex: 3, correct: "t" },
+                    singular: { part1: "Bro", part2: "", correct: "t" },
+                    plural: { part1: "Bro", part2: "e", correct: "t" },
                     fullWord: "Brot",
                     hint: "Singular: Brot (wie Bro-te), Plural: Brote",
                     letterPair: ["d", "t"]
                 },
                 { 
-                    singular: { part1: "Ta", part2: "", gapIndex: 2, correct: "g" },
-                    plural: { part1: "Ta", part2: "e", gapIndex: 2, correct: "g" },
+                    singular: { part1: "Ta", part2: "", correct: "g" },
+                    plural: { part1: "Ta", part2: "e", correct: "g" },
                     fullWord: "Tag",
                     hint: "Singular: Tag (wie Ta-ge), Plural: Tage",
                     letterPair: ["g", "k"]
                 },
                 { 
-                    singular: { part1: "Ber", part2: "", gapIndex: 3, correct: "g" },
-                    plural: { part1: "Ber", part2: "e", gapIndex: 3, correct: "g" },
+                    singular: { part1: "Ber", part2: "", correct: "g" },
+                    plural: { part1: "Ber", part2: "e", correct: "g" },
                     fullWord: "Berg",
                     hint: "Singular: Berg (wie Ber-ge), Plural: Berge",
                     letterPair: ["g", "k"]
                 },
                 { 
-                    singular: { part1: "We", part2: "", gapIndex: 2, correct: "g" },
-                    plural: { part1: "We", part2: "e", gapIndex: 2, correct: "g" },
+                    singular: { part1: "We", part2: "", correct: "g" },
+                    plural: { part1: "We", part2: "e", correct: "g" },
                     fullWord: "Weg",
                     hint: "Singular: Weg (wie We-ge), Plural: Wege",
                     letterPair: ["g", "k"]
                 },
                 { 
-                    singular: { part1: "Zwer", part2: "", gapIndex: 4, correct: "g" },
-                    plural: { part1: "Zwer", part2: "e", gapIndex: 4, correct: "g" },
+                    singular: { part1: "Zwer", part2: "", correct: "g" },
+                    plural: { part1: "Zwer", part2: "e", correct: "g" },
                     fullWord: "Zwerg",
                     hint: "Singular: Zwerg (wie Zwer-ge), Plural: Zwerge",
                     letterPair: ["g", "k"]
                 },
                 { 
-                    singular: { part1: "Fabri", part2: "", gapIndex: 5, correct: "k" },
-                    plural: { part1: "Fabri", part2: "en", gapIndex: 5, correct: "k" },
+                    singular: { part1: "Fabri", part2: "", correct: "k" },
+                    plural: { part1: "Fabri", part2: "en", correct: "k" },
                     fullWord: "Fabrik",
                     hint: "Singular: Fabrik (wie Fabri-ken), Plural: Fabriken",
+                    letterPair: ["g", "k"]
+                },
+                // NEUE NOMEN
+                { 
+                    singular: { part1: "Ausflu", part2: "", correct: "g" },
+                    plural: { part1: "Ausflü", part2: "e", correct: "g" },
+                    fullWord: "Ausflug",
+                    hint: "Singular: Ausflug (wie Ausflü-ge), Plural: Ausflüge",
+                    letterPair: ["g", "k"]
+                },
+                { 
+                    singular: { part1: "Zwei", part2: "", correct: "g" },
+                    plural: { part1: "Zwei", part2: "e", correct: "g" },
+                    fullWord: "Zweig",
+                    hint: "Singular: Zweig (wie Zwei-ge), Plural: Zweige",
+                    letterPair: ["g", "k"]
+                },
+                { 
+                    singular: { part1: "Ver", part2: "", correct: "b" },
+                    plural: { part1: "Ver", part2: "en", correct: "b" },
+                    fullWord: "Verb",
+                    hint: "Singular: Verb (wie Ver-ben), Plural: Verben",
+                    letterPair: ["b", "p"]
+                },
+                { 
+                    singular: { part1: "Res", part2: "", correct: "t" },
+                    plural: { part1: "Res", part2: "e", correct: "t" },
+                    fullWord: "Rest",
+                    hint: "Singular: Rest (wie Res-te), Plural: Reste",
+                    letterPair: ["d", "t"]
+                },
+                { 
+                    singular: { part1: "Kin", part2: "", correct: "d" },
+                    plural: { part1: "Kin", part2: "er", correct: "d" },
+                    fullWord: "Kind",
+                    hint: "Singular: Kind (wie Kin-der), Plural: Kinder",
+                    letterPair: ["d", "t"]
+                },
+                { 
+                    singular: { part1: "Urlau", part2: "", correct: "b" },
+                    plural: { part1: "Urlau", part2: "e", correct: "b" },
+                    fullWord: "Urlaub",
+                    hint: "Singular: Urlaub (wie Urlau-be), Plural: Urlaube",
+                    letterPair: ["b", "p"]
+                },
+                { 
+                    singular: { part1: "Hu", part2: "", correct: "t" },
+                    plural: { part1: "Hü", part2: "e", correct: "t" },
+                    fullWord: "Hut",
+                    hint: "Singular: Hut (wie Hü-te), Plural: Hüte",
+                    letterPair: ["d", "t"]
+                },
+                { 
+                    singular: { part1: "Fel", part2: "", correct: "d" },
+                    plural: { part1: "Fel", part2: "er", correct: "d" },
+                    fullWord: "Feld",
+                    hint: "Singular: Feld (wie Fel-der), Plural: Felder",
+                    letterPair: ["d", "t"]
+                },
+                { 
+                    singular: { part1: "Wer", part2: "", correct: "k" },
+                    plural: { part1: "Wer", part2: "e", correct: "k" },
+                    fullWord: "Werk",
+                    hint: "Singular: Werk (wie Wer-ke), Plural: Werke",
+                    letterPair: ["g", "k"]
+                },
+                { 
+                    singular: { part1: "Abe", part2: "", correct: "d" },
+                    plural: { part1: "Abe", part2: "e", correct: "d" },
+                    fullWord: "Abend",
+                    hint: "Singular: Abend (wie Abe-nde), Plural: Abende",
+                    letterPair: ["d", "t"]
+                },
+                { 
+                    singular: { part1: "Win", part2: "", correct: "d" },
+                    plural: { part1: "Win", part2: "e", correct: "d" },
+                    fullWord: "Wind",
+                    hint: "Singular: Wind (wie Win-de), Plural: Winde",
+                    letterPair: ["d", "t"]
+                },
+                { 
+                    singular: { part1: "Sonnta", part2: "", correct: "g" },
+                    plural: { part1: "Sonnta", part2: "e", correct: "g" },
+                    fullWord: "Sonntag",
+                    hint: "Singular: Sonntag (wie Sonnta-ge), Plural: Sonntage",
                     letterPair: ["g", "k"]
                 }
             ],
             
-            // Verben (Infinitiv/Personalform) - KORRIGIERT
+            // Verben (Infinitiv/Personalform) - ERWEITERT
             verbs: [
                 { 
                     infinitive: { part1: "schie", part2: "en", correct: "b" },
@@ -654,6 +739,91 @@
                     fullWord: "siegen",
                     hint: "Infinitiv: siegen (wie sie-gen), er siegt",
                     letterPair: ["g", "k"]
+                },
+                // NEUE VERBEN
+                { 
+                    infinitive: { part1: "tra", part2: "en", correct: "g" },
+                    conjugated: { part1: "trä", part2: "t", correct: "g" },
+                    fullWord: "tragen",
+                    hint: "Infinitiv: tragen (wie tra-gen), er trägt",
+                    letterPair: ["g", "k"]
+                },
+                { 
+                    infinitive: { part1: "sa", part2: "en", correct: "g" },
+                    conjugated: { part1: "sa", part2: "t", correct: "g" },
+                    fullWord: "sagen",
+                    hint: "Infinitiv: sagen (wie sa-gen), er sagt",
+                    letterPair: ["g", "k"]
+                },
+                { 
+                    infinitive: { part1: "gra", part2: "en", correct: "b" },
+                    conjugated: { part1: "grä", part2: "t", correct: "b" },
+                    fullWord: "graben",
+                    hint: "Infinitiv: graben (wie gra-ben), er gräbt",
+                    letterPair: ["b", "p"]
+                },
+                { 
+                    infinitive: { part1: "schrei", part2: "en", correct: "b" },
+                    conjugated: { part1: "schrei", part2: "t", correct: "b" },
+                    fullWord: "schreiben",
+                    hint: "Infinitiv: schreiben (wie schrei-ben), er schreibt",
+                    letterPair: ["b", "p"]
+                },
+                { 
+                    infinitive: { part1: "blei", part2: "en", correct: "b" },
+                    conjugated: { part1: "blei", part2: "t", correct: "b" },
+                    fullWord: "bleiben",
+                    hint: "Infinitiv: bleiben (wie blei-ben), er bleibt",
+                    letterPair: ["b", "p"]
+                },
+                { 
+                    infinitive: { part1: "fra", part2: "en", correct: "g" },
+                    conjugated: { part1: "fra", part2: "t", correct: "g" },
+                    fullWord: "fragen",
+                    hint: "Infinitiv: fragen (wie fra-gen), er fragt",
+                    letterPair: ["g", "k"]
+                },
+                { 
+                    infinitive: { part1: "zei", part2: "en", correct: "g" },
+                    conjugated: { part1: "zei", part2: "t", correct: "g" },
+                    fullWord: "zeigen",
+                    hint: "Infinitiv: zeigen (wie zei-gen), er zeigt",
+                    letterPair: ["g", "k"]
+                },
+                { 
+                    infinitive: { part1: "ü", part2: "en", correct: "b" },
+                    conjugated: { part1: "ü", part2: "t", correct: "b" },
+                    fullWord: "üben",
+                    hint: "Infinitiv: üben (wie ü-ben), er übt",
+                    letterPair: ["b", "p"]
+                },
+                { 
+                    infinitive: { part1: "flie", part2: "en", correct: "g" },
+                    conjugated: { part1: "flie", part2: "t", correct: "g" },
+                    fullWord: "fliegen",
+                    hint: "Infinitiv: fliegen (wie flie-gen), er fliegt",
+                    letterPair: ["g", "k"]
+                },
+                { 
+                    infinitive: { part1: "li", part2: "en", correct: "g" },
+                    conjugated: { part1: "li", part2: "t", correct: "g" },
+                    fullWord: "liegen",
+                    hint: "Infinitiv: liegen (wie lie-gen), er liegt",
+                    letterPair: ["g", "k"]
+                },
+                { 
+                    infinitive: { part1: "stei", part2: "en", correct: "g" },
+                    conjugated: { part1: "stei", part2: "t", correct: "g" },
+                    fullWord: "steigen",
+                    hint: "Infinitiv: steigen (wie stei-gen), er steigt",
+                    letterPair: ["g", "k"]
+                },
+                { 
+                    infinitive: { part1: "lie", part2: "en", correct: "b" },
+                    conjugated: { part1: "lie", part2: "t", correct: "b" },
+                    fullWord: "lieben",
+                    hint: "Infinitiv: lieben (wie lie-ben), er liebt",
+                    letterPair: ["b", "p"]
                 }
             ]
         };
@@ -666,7 +836,7 @@
         let correctCount = 0;
         let incorrectCount = 0;
         let wordCount = 0;
-        const wordsPerRound = 8;
+        const wordsPerRound = 10;
         
         // DOM-Elemente
         const wordTypeDisplay = document.getElementById('word-type-display');
@@ -848,7 +1018,7 @@
                 nounPluralGap.style.backgroundColor = 'white';
                 nounPluralGap.style.color = '#0066cc';
             } else {
-                // Verben anzeigen - KORRIGIERT
+                // Verben anzeigen
                 verbInfinitivePart1.textContent = wordData.infinitive.part1;
                 verbInfinitivePart2.textContent = wordData.infinitive.part2;
                 verbInfinitiveGap.textContent = "?";
@@ -894,7 +1064,7 @@
                 isCorrect = singularCorrect && pluralCorrect;
                 correctLetter = currentWord.singular.correct;
             } else {
-                // Prüfe Infinitiv und Personalform - KORRIGIERT
+                // Prüfe Infinitiv und Personalform
                 const infinitiveCorrect = selectedLetter === currentWord.infinitive.correct;
                 const conjugatedCorrect = selectedLetter === currentWord.conjugated.correct;
                 isCorrect = infinitiveCorrect && conjugatedCorrect;
